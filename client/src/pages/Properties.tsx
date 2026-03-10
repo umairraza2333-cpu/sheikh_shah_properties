@@ -179,10 +179,11 @@ export default function Properties() {
                       </p>
 
                       <div className="flex gap-2">
-                        <Link href={`/properties/${property.id}`}>
-                          <a className="flex-1 bg-accent text-accent-foreground py-2 rounded-lg font-semibold hover:shadow-lg transition-all duration-300 text-center">
-                            View Details
-                          </a>
+                        <Link
+                          href={`/properties/${property.id}`}
+                          className="flex-1 bg-accent text-accent-foreground py-2 rounded-lg font-semibold hover:shadow-lg transition-all duration-300 text-center"
+                        >
+                          View Details
                         </Link>
                         <button
                           onClick={() => handleWhatsAppInquiry(property.id, property.title)}

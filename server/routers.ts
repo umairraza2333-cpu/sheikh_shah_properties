@@ -19,6 +19,7 @@ import {
   getInquiries,
   updateInquiry,
 } from "./db";
+import { uploadImage } from "./imageUpload";
 
 export const appRouter = router({
   system: systemRouter,
@@ -225,6 +226,42 @@ export const appRouter = router({
         }
         await updateInquiry(input.id, { status: input.status });
         return { success: true };
+      }),
+  }),
+
+  upload: router({
+    propertyImage: protectedProcedure
+      .input(z.object({
+        file: z.instanceof(File),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        if (ctx.user?.role !== 'admin') {
+          throw new Error('Unauthorized');
+        }
+        const buffer = await input.file.arrayBuffer();
+        const result = await uploadImage(
+          Buffer.from(buffer),
+          input.file.name,
+          'properties'
+        );
+        return result;
+      }),
+
+    projectImage: protectedProcedure
+      .input(z.object({
+        file: z.instanceof(File),
+      }))
+      .mutation(async ({ input, ctx }) => {
+        if (ctx.user?.role !== 'admin') {
+          throw new Error('Unauthorized');
+        }
+        const buffer = await input.file.arrayBuffer();
+        const result = await uploadImage(
+          Buffer.from(buffer),
+          input.file.name,
+          'projects'
+        );
+        return result;
       }),
   }),
 });

@@ -4,6 +4,8 @@ import { useAuth } from '@/_core/hooks/useAuth';
 import { trpc } from '@/lib/trpc';
 import { toast } from 'sonner';
 import { Link } from 'wouter';
+import PropertyForm from '@/components/PropertyForm';
+import ProjectForm from '@/components/ProjectForm';
 
 export default function Admin() {
   const { user } = useAuth();
@@ -11,19 +13,21 @@ export default function Admin() {
   const [showAddProperty, setShowAddProperty] = useState(false);
   const [showAddProject, setShowAddProject] = useState(false);
 
-  const { data: properties = [] } = trpc.properties.list.useQuery();
-  const { data: projects = [] } = trpc.projects.list.useQuery();
+  const { data: properties = [], refetch: refetchProperties } = trpc.properties.list.useQuery();
+  const { data: projects = [], refetch: refetchProjects } = trpc.projects.list.useQuery();
   const { data: inquiries = [] } = trpc.inquiries.list.useQuery();
 
   const deletePropertyMutation = trpc.properties.delete.useMutation({
     onSuccess: () => {
       toast.success('Property deleted successfully');
+      refetchProperties();
     },
   });
 
   const deleteProjectMutation = trpc.projects.delete.useMutation({
     onSuccess: () => {
       toast.success('Project deleted successfully');
+      refetchProjects();
     },
   });
 
@@ -34,8 +38,8 @@ export default function Admin() {
         <div className="text-center">
           <p className="text-lg text-muted-foreground mb-4">Access Denied</p>
           <p className="text-muted-foreground">You need admin privileges to access this page</p>
-          <Link href="/">
-            <a className="text-accent hover:underline mt-4 inline-block">Back to Home</a>
+          <Link href="/" className="text-accent hover:underline mt-4 inline-block">
+            Back to Home
           </Link>
         </div>
       </div>
@@ -101,10 +105,16 @@ export default function Admin() {
               </button>
             </div>
 
-            {/* Add Property Form - Placeholder */}
+            {/* Add Property Form */}
             {showAddProperty && (
               <div className="bg-card border border-border rounded-xl p-6 mb-8">
-                <p className="text-muted-foreground">Property form coming soon...</p>
+                <h3 className="text-xl font-bold mb-6">Create New Property</h3>
+                <PropertyForm
+                  onSuccess={() => {
+                    setShowAddProperty(false);
+                    refetchProperties();
+                  }}
+                />
               </div>
             )}
 
@@ -118,6 +128,7 @@ export default function Admin() {
                       <th className="px-6 py-3 text-left font-semibold">Price</th>
                       <th className="px-6 py-3 text-left font-semibold">Location</th>
                       <th className="px-6 py-3 text-left font-semibold">Status</th>
+                      <th className="px-6 py-3 text-left font-semibold">Images</th>
                       <th className="px-6 py-3 text-left font-semibold">Actions</th>
                     </tr>
                   </thead>
@@ -131,6 +142,11 @@ export default function Admin() {
                           <span className="px-3 py-1 bg-accent/20 text-accent rounded-full text-sm font-semibold">
                             {property.status}
                           </span>
+                        </td>
+                        <td className="px-6 py-3 text-sm">
+                          {property.images && property.images.length > 0
+                            ? `${property.images.length} image(s)`
+                            : 'No images'}
                         </td>
                         <td className="px-6 py-3 flex gap-2">
                           <button className="p-2 text-muted-foreground hover:text-accent transition-colors">
@@ -172,10 +188,16 @@ export default function Admin() {
               </button>
             </div>
 
-            {/* Add Project Form - Placeholder */}
+            {/* Add Project Form */}
             {showAddProject && (
               <div className="bg-card border border-border rounded-xl p-6 mb-8">
-                <p className="text-muted-foreground">Project form coming soon...</p>
+                <h3 className="text-xl font-bold mb-6">Create New Project</h3>
+                <ProjectForm
+                  onSuccess={() => {
+                    setShowAddProject(false);
+                    refetchProjects();
+                  }}
+                />
               </div>
             )}
 
@@ -189,6 +211,7 @@ export default function Admin() {
                       <th className="px-6 py-3 text-left font-semibold">Location</th>
                       <th className="px-6 py-3 text-left font-semibold">Status</th>
                       <th className="px-6 py-3 text-left font-semibold">Units</th>
+                      <th className="px-6 py-3 text-left font-semibold">Images</th>
                       <th className="px-6 py-3 text-left font-semibold">Actions</th>
                     </tr>
                   </thead>
@@ -202,7 +225,14 @@ export default function Admin() {
                             {project.status}
                           </span>
                         </td>
-                        <td className="px-6 py-3">{project.completedUnits || 0}/{project.totalUnits || 0}</td>
+                        <td className="px-6 py-3 text-sm">
+                          {project.completedUnits || 0}/{project.totalUnits || 0}
+                        </td>
+                        <td className="px-6 py-3 text-sm">
+                          {project.images && project.images.length > 0
+                            ? `${project.images.length} image(s)`
+                            : 'No images'}
+                        </td>
                         <td className="px-6 py-3 flex gap-2">
                           <button className="p-2 text-muted-foreground hover:text-accent transition-colors">
                             <Edit2 size={18} />

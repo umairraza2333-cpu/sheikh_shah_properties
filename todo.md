@@ -74,3 +74,19 @@
 - [ ] Cross-browser testing
 - [ ] Mobile responsiveness testing
 - [ ] Create final checkpoint and prepare for deployment
+
+## Bug Fixes
+- [ ] Fix nested <a> tags error in Header component
+- [ ] Fix nested <a> tags error in Footer component
+- [ ] Fix nested <a> tags error in Properties page
+
+## Image Upload System
+- [x] Fix nested anchor tags in PropertyDetail page
+- [x] Update database schema to support multiple images for properties and projects
+- [x] Create image upload component with drag-and-drop support
+- [x] Implement S3 storage integration for images
+- [x] Add image optimization for fast loading
+- [x] Create property image upload form in admin dashboard
+- [x] Create project image upload form in admin dashboard
+- [x] Test image uploads and display on frontend
+- [x] Ensure images display on property cards and detail pages

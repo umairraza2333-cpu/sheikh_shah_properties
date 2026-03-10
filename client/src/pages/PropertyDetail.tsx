@@ -31,8 +31,8 @@ export default function PropertyDetail() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <p className="text-lg text-muted-foreground mb-4">Property not found</p>
-          <Link href="/properties">
-            <a className="text-accent hover:underline">Back to Properties</a>
+          <Link href="/properties" className="text-accent hover:underline">
+            Back to Properties
           </Link>
         </div>
       </div>
@@ -54,11 +54,9 @@ export default function PropertyDetail() {
       {/* Header */}
       <div className="bg-foreground text-background py-8">
         <div className="container">
-          <Link href="/properties">
-            <a className="flex items-center gap-2 text-background/80 hover:text-background mb-4 transition-colors">
-              <ArrowLeft size={20} />
-              <span>Back to Properties</span>
-            </a>
+          <Link href="/properties" className="flex items-center gap-2 text-background/80 hover:text-background mb-4 transition-colors">
+            <ArrowLeft size={20} />
+            <span>Back to Properties</span>
           </Link>
           <h1 className="text-4xl font-bold">{property.title}</h1>
         </div>
