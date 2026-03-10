@@ -123,14 +123,26 @@ export async function createProperty(data: InsertProperty) {
   const db = await getDb();
   if (!db) throw new Error('Database not available');
   
-  await db.insert(properties).values(data);
+  // Ensure images array is properly serialized
+  const sanitizedData = {
+    ...data,
+    images: data.images ? JSON.stringify(data.images) : undefined,
+  };
+  
+  await db.insert(properties).values(sanitizedData as any);
 }
 
 export async function updateProperty(id: number, data: Partial<InsertProperty>) {
   const db = await getDb();
   if (!db) throw new Error('Database not available');
   
-  await db.update(properties).set(data).where(eq(properties.id, id));
+  // Ensure images array is properly serialized
+  const sanitizedData = {
+    ...data,
+    images: data.images ? JSON.stringify(data.images) : undefined,
+  };
+  
+  await db.update(properties).set(sanitizedData as any).where(eq(properties.id, id));
 }
 
 export async function deleteProperty(id: number) {
@@ -163,14 +175,26 @@ export async function createProject(data: InsertProject) {
   const db = await getDb();
   if (!db) throw new Error('Database not available');
   
-  await db.insert(projects).values(data);
+  // Ensure images array is properly serialized
+  const sanitizedData = {
+    ...data,
+    images: data.images ? JSON.stringify(data.images) : undefined,
+  };
+  
+  await db.insert(projects).values(sanitizedData as any);
 }
 
 export async function updateProject(id: number, data: Partial<InsertProject>) {
   const db = await getDb();
   if (!db) throw new Error('Database not available');
   
-  await db.update(projects).set(data).where(eq(projects.id, id));
+  // Ensure images array is properly serialized
+  const sanitizedData = {
+    ...data,
+    images: data.images ? JSON.stringify(data.images) : undefined,
+  };
+  
+  await db.update(projects).set(sanitizedData as any).where(eq(projects.id, id));
 }
 
 export async function deleteProject(id: number) {

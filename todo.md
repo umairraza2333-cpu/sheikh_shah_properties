@@ -90,3 +90,7 @@
 - [x] Create project image upload form in admin dashboard
 - [x] Test image uploads and display on frontend
 - [x] Ensure images display on property cards and detail pages
+
+## Bug Fixes
+- [x] Fix JSON validation error when storing images array in database
+- [x] Ensure proper serialization of image URLs in database operations
