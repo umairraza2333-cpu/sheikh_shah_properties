@@ -94,14 +94,20 @@ export async function getProperties(filters?: { area?: string; priceMin?: number
   const db = await getDb();
   if (!db) return [];
 
+  let results: any[] = [];
   if (filters?.area) {
-    return await db.select().from(properties).where(eq(properties.area, filters.area));
-  }
-  if (filters?.bedrooms) {
-    return await db.select().from(properties).where(eq(properties.bedrooms, filters.bedrooms));
+    results = await db.select().from(properties).where(eq(properties.area, filters.area));
+  } else if (filters?.bedrooms) {
+    results = await db.select().from(properties).where(eq(properties.bedrooms, filters.bedrooms));
+  } else {
+    results = await db.select().from(properties);
   }
 
-  return await db.select().from(properties);
+  // Ensure images is always an array
+  return results.map(p => ({
+    ...p,
+    images: Array.isArray(p.images) ? p.images : (typeof p.images === 'string' ? JSON.parse(p.images) : []),
+  }));
 }
 
 export async function getPropertyById(id: number) {
@@ -109,24 +115,36 @@ export async function getPropertyById(id: number) {
   if (!db) return undefined;
   
   const result = await db.select().from(properties).where(eq(properties.id, id)).limit(1);
-  return result.length > 0 ? result[0] : undefined;
+  if (result.length === 0) return undefined;
+  
+  const property = result[0];
+  return {
+    ...property,
+    images: Array.isArray(property.images) ? property.images : (typeof property.images === 'string' ? JSON.parse(property.images) : []),
+  };
 }
 
 export async function getFeaturedProperties(limit = 6) {
   const db = await getDb();
   if (!db) return [];
   
-  return db.select().from(properties).where(eq(properties.featured, true)).limit(limit);
+  const results = await db.select().from(properties).where(eq(properties.featured, true)).limit(limit);
+  
+  // Ensure images is always an array
+  return results.map(p => ({
+    ...p,
+    images: Array.isArray(p.images) ? p.images : (typeof p.images === 'string' ? JSON.parse(p.images) : []),
+  }));
 }
 
 export async function createProperty(data: InsertProperty) {
   const db = await getDb();
   if (!db) throw new Error('Database not available');
   
-  // Ensure images array is properly serialized
+  // Keep images as array - Drizzle will handle JSON serialization
   const sanitizedData = {
     ...data,
-    images: data.images ? JSON.stringify(data.images) : undefined,
+    images: Array.isArray(data.images) ? data.images : [],
   };
   
   await db.insert(properties).values(sanitizedData as any);
@@ -157,10 +175,18 @@ export async function getProjects(status?: string) {
   const db = await getDb();
   if (!db) return [];
   
+  let results: any[] = [];
   if (status) {
-    return db.select().from(projects).where(eq(projects.status, status as any));
+    results = await db.select().from(projects).where(eq(projects.status, status as any));
+  } else {
+    results = await db.select().from(projects);
   }
-  return db.select().from(projects);
+  
+  // Ensure images is always an array
+  return results.map(p => ({
+    ...p,
+    images: Array.isArray(p.images) ? p.images : (typeof p.images === 'string' ? JSON.parse(p.images) : []),
+  }));
 }
 
 export async function getProjectById(id: number) {
@@ -168,17 +194,23 @@ export async function getProjectById(id: number) {
   if (!db) return undefined;
   
   const result = await db.select().from(projects).where(eq(projects.id, id)).limit(1);
-  return result.length > 0 ? result[0] : undefined;
+  if (result.length === 0) return undefined;
+  
+  const project = result[0];
+  return {
+    ...project,
+    images: Array.isArray(project.images) ? project.images : (typeof project.images === 'string' ? JSON.parse(project.images) : []),
+  };
 }
 
 export async function createProject(data: InsertProject) {
   const db = await getDb();
   if (!db) throw new Error('Database not available');
   
-  // Ensure images array is properly serialized
+  // Keep images as array - Drizzle will handle JSON serialization
   const sanitizedData = {
     ...data,
-    images: data.images ? JSON.stringify(data.images) : undefined,
+    images: Array.isArray(data.images) ? data.images : [],
   };
   
   await db.insert(projects).values(sanitizedData as any);
@@ -188,10 +220,10 @@ export async function updateProject(id: number, data: Partial<InsertProject>) {
   const db = await getDb();
   if (!db) throw new Error('Database not available');
   
-  // Ensure images array is properly serialized
+  // Keep images as array - Drizzle will handle JSON serialization
   const sanitizedData = {
     ...data,
-    images: data.images ? JSON.stringify(data.images) : undefined,
+    images: data.images ? (Array.isArray(data.images) ? data.images : []) : undefined,
   };
   
   await db.update(projects).set(sanitizedData as any).where(eq(projects.id, id));

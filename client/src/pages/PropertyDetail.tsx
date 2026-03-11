@@ -39,7 +39,7 @@ export default function PropertyDetail() {
     );
   }
 
-  const images = property.images && property.images.length > 0 ? property.images : [property.imageUrl || ''];
+  const images = Array.isArray(property.images) && property.images.length > 0 ? property.images : (property.imageUrl ? [property.imageUrl] : []);
 
   const handleWhatsAppInquiry = () => {
     const message = `Hi, I'm interested in this property: ${property.title}. Price: ${property.price}`;
@@ -87,7 +87,7 @@ export default function PropertyDetail() {
               {/* Thumbnails */}
               {images.length > 1 && (
                 <div className="flex gap-2 overflow-x-auto pb-2">
-                  {images.map((image, index) => (
+                  {images.map((image: string, index: number) => (
                     <button
                       key={index}
                       onClick={() => setSelectedImage(index)}

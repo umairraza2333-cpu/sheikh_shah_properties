@@ -57,31 +57,34 @@ export default function ProjectDetail() {
           {/* Main Content */}
           <div className="lg:col-span-2">
             {/* Image Gallery */}
-            {project.images && project.images.length > 0 && (
-              <div className="mb-8">
-                <div className="relative h-96 bg-muted rounded-xl overflow-hidden mb-4">
-                  <img
-                    src={project.images[0]}
-                    alt={project.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-
-                {project.images.length > 1 && (
-                  <div className="grid grid-cols-4 gap-4">
-                    {project.images.slice(0, 4).map((image, index) => (
-                      <div key={index} className="h-24 bg-muted rounded-lg overflow-hidden cursor-pointer hover:opacity-80 transition-opacity">
-                        <img
-                          src={image}
-                          alt={`${project.name} ${index + 1}`}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    ))}
+            {(() => {
+              const images = Array.isArray(project.images) ? project.images : [];
+              return images.length > 0 ? (
+                <div className="mb-8">
+                  <div className="relative h-96 bg-muted rounded-xl overflow-hidden mb-4">
+                    <img
+                      src={images[0]}
+                      alt={project.name}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
-                )}
-              </div>
-            )}
+
+                  {images.length > 1 && (
+                    <div className="grid grid-cols-4 gap-4">
+                      {images.slice(0, 4).map((image: string, index: number) => (
+                        <div key={index} className="h-24 bg-muted rounded-lg overflow-hidden cursor-pointer hover:opacity-80 transition-opacity">
+                          <img
+                            src={image}
+                            alt={`${project.name} ${index + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : null;
+            })()}
 
             {/* Project Information */}
             <div className="bg-card border border-border rounded-xl p-8 mb-8">
