@@ -1,7 +1,9 @@
 import { Building2, MapPin, CheckCircle, Clock } from 'lucide-react';
 import { trpc } from '@/lib/trpc';
+import { useLocation } from 'wouter';
 
 export default function Projects() {
+  const [, setLocation] = useLocation();
   const { data: projects = [] } = trpc.projects.list.useQuery();
 
   const ongoingProjects = projects.filter(p => p.status === 'ongoing');
@@ -67,7 +69,10 @@ export default function Projects() {
           </div>
         )}
 
-        <button className="w-full bg-accent text-accent-foreground py-2 rounded-lg font-semibold hover:shadow-lg transition-all duration-300">
+        <button 
+          onClick={() => setLocation(`/projects/${project.id}`)}
+          className="w-full bg-accent text-accent-foreground py-2 rounded-lg font-semibold hover:shadow-lg transition-all duration-300"
+        >
           Learn More
         </button>
       </div>

@@ -94,3 +94,14 @@
 ## Bug Fixes
 - [x] Fix JSON validation error when storing images array in database
 - [x] Ensure proper serialization of image URLs in database operations
+
+## Edit Functionality
+- [ ] Create edit property form with image management
+- [ ] Create edit project form with image management
+- [ ] Update admin dashboard with edit modals
+- [ ] Add tRPC procedures for fetching single property/project
+- [ ] Implement image removal and reordering in edit forms
+- [ ] Test edit functionality end-to-end
+
+## Current Bugs
+- [x] Fix "Learn More" button in projects section
