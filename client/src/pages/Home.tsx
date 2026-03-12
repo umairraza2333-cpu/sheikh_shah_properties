@@ -1,144 +1,114 @@
 import { useState } from 'react';
-import { Search, MapPin, DollarSign, Bed, CheckCircle, MapPinIcon, Building2, TrendingUp, Users } from 'lucide-react';
+import { MapPin, DollarSign, Bed, Building2, Award, Users, Zap, MessageCircle } from 'lucide-react';
 import { Link } from 'wouter';
 import { trpc } from '@/lib/trpc';
+import SEO from '@/components/SEO';
+import { RealEstateAgentSchema, OrganizationSchema } from '@/components/RealEstateSchema';
+import { pageSEO } from '@/lib/seoUtils';
+
+const WHATSAPP_NUMBER = '923392001927';
 
 export default function Home() {
-  const [searchArea, setSearchArea] = useState('');
-  const [searchBedrooms, setSearchBedrooms] = useState<number | undefined>();
-
-  const { data: featuredProperties } = trpc.properties.featured.useQuery({ limit: 6 });
+  const [selectedArea, setSelectedArea] = useState<string>('');
+  const { data: properties = [] } = trpc.properties.list.useQuery({
+    area: selectedArea || undefined,
+  });
 
   const areas = ['Scheme 33', 'Scheme 45', 'Gulshan-e-Iqbal', 'Gulshan-e-Johar'];
 
-  const services = [
-    {
-      icon: Building2,
-      title: 'Property Buying',
-      description: 'Find your perfect property with our expert guidance',
-    },
-    {
-      icon: TrendingUp,
-      title: 'Property Selling',
-      description: 'Sell your property quickly at the best price',
-    },
-    {
-      icon: Users,
-      title: 'Investment Consultancy',
-      description: 'Smart investment opportunities in prime locations',
-    },
-    {
-      icon: MapPinIcon,
-      title: 'Project Marketing',
-      description: 'Comprehensive marketing for your projects',
-    },
-  ];
+  const handleWhatsAppInquiry = (message: string) => {
+    window.open(
+      `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`,
+      '_blank'
+    );
+  };
 
   return (
-    <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="relative min-h-[600px] md:min-h-[700px] bg-gradient-to-br from-foreground via-foreground to-foreground/90 text-background overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-accent rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-accent rounded-full blur-3xl"></div>
-        </div>
+    <>
+      <SEO
+        title={pageSEO.home.title}
+        description={pageSEO.home.description}
+        keywords={pageSEO.home.keywords}
+        type="website"
+      />
+      <RealEstateAgentSchema />
+      <OrganizationSchema />
 
-        <div className="container relative z-10 py-12 md:py-20 lg:py-24">
-          <div className="max-w-3xl mx-auto text-center animate-fade-in">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight">
-              Premium Property Investment in Karachi
-            </h1>
-            <p className="text-lg md:text-xl text-background/90 mb-8">
+      <div className="min-h-screen bg-background">
+        {/* Hero Section */}
+        <section className="relative bg-gradient-to-br from-foreground to-foreground/90 text-background py-20 md:py-32">
+          <div className="container">
+            <h1 className="text-5xl md:text-6xl font-bold mb-4">Premium Property Investment in Karachi</h1>
+            <p className="text-xl md:text-2xl text-background/90 mb-8">
               Sheikh & Shah Properties – <span className="text-accent font-semibold">Where Trust Meets Success</span>
             </p>
 
             {/* Search Section */}
-            <div className="bg-background text-foreground rounded-2xl p-6 md:p-8 shadow-2xl">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                {/* Location Search */}
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-3 text-accent" size={20} />
-                  <input
-                    type="text"
-                    placeholder="Select Area"
-                    value={searchArea}
-                    onChange={(e) => setSearchArea(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent"
-                  />
-                </div>
-
-                {/* Bedrooms */}
-                <div className="relative">
-                  <Bed className="absolute left-3 top-3 text-accent" size={20} />
+            <div className="bg-card border border-border rounded-2xl p-6 md:p-8 max-w-4xl">
+              <h2 className="text-2xl font-bold mb-6 text-foreground">Find Your Perfect Property</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div>
+                  <label className="block text-sm font-semibold text-muted-foreground mb-2">Location</label>
                   <select
-                    value={searchBedrooms || ''}
-                    onChange={(e) => setSearchBedrooms(e.target.value ? parseInt(e.target.value) : undefined)}
-                    className="w-full pl-10 pr-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent appearance-none bg-background"
+                    value={selectedArea}
+                    onChange={(e) => setSelectedArea(e.target.value)}
+                    className="w-full px-4 py-3 rounded-lg bg-background border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
                   >
-                    <option value="">Any Bedrooms</option>
-                    <option value="1">1 Bedroom</option>
-                    <option value="2">2 Bedrooms</option>
-                    <option value="3">3 Bedrooms</option>
-                    <option value="4">4+ Bedrooms</option>
+                    <option value="">All Areas</option>
+                    {areas.map((area) => (
+                      <option key={area} value={area}>
+                        {area}
+                      </option>
+                    ))}
                   </select>
                 </div>
-
-                {/* Search Button */}
-                <Link href="/properties">
-                  <a className="flex items-center justify-center gap-2 bg-accent text-accent-foreground rounded-lg hover:shadow-lg transition-all duration-300 font-semibold">
-                    <Search size={20} />
-                    <span>Search</span>
-                  </a>
-                </Link>
+                <div>
+                  <label className="block text-sm font-semibold text-muted-foreground mb-2">Property Type</label>
+                  <select className="w-full px-4 py-3 rounded-lg bg-background border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-accent">
+                    <option>All Types</option>
+                    <option>Apartment</option>
+                    <option>House</option>
+                    <option>Commercial</option>
+                  </select>
+                </div>
+                <div className="flex items-end">
+                  <Link href="/properties" className="w-full bg-accent text-accent-foreground py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-300">
+                    Search Properties
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Featured Properties Section */}
-      <section className="section-padding bg-background">
-        <div className="container">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Featured Properties</h2>
-            <p className="text-muted-foreground text-lg">Discover our hand-picked premium properties</p>
-          </div>
+        {/* Featured Properties */}
+        <section className="py-16 md:py-24 bg-background">
+          <div className="container">
+            <h2 className="text-4xl font-bold mb-4">Featured Properties</h2>
+            <p className="text-lg text-muted-foreground mb-12">Discover our hand-picked premium properties in Karachi</p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredProperties?.map((property) => (
-              <Link key={property.id} href={`/properties/${property.id}`}>
-                <a className="group cursor-pointer">
-                  <div className="bg-card rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105">
-                    {/* Image */}
-                    <div className="relative h-48 md:h-56 bg-muted overflow-hidden">
-                      {property.imageUrl ? (
-                        <img
-                          src={property.imageUrl}
-                          alt={property.title}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted to-muted/50">
-                          <Building2 size={48} className="text-muted-foreground" />
-                        </div>
-                      )}
-                      {property.featured && (
-                        <div className="absolute top-4 right-4 bg-accent text-accent-foreground px-3 py-1 rounded-full text-sm font-semibold">
-                          Featured
-                        </div>
-                      )}
+            {properties.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {properties.slice(0, 3).map((property) => (
+                  <div key={property.id} className="bg-card border border-border rounded-xl overflow-hidden hover:shadow-2xl transition-all duration-300">
+                    <div className="relative h-48 bg-muted overflow-hidden">
+                      {(() => {
+                        const imageUrl = Array.isArray(property.images) && property.images.length > 0 ? property.images[0] : property.imageUrl;
+                        return imageUrl ? (
+                          <img src={imageUrl} alt={property.title} className="w-full h-full object-cover" loading="lazy" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted to-muted/50">
+                            <Building2 size={48} className="text-muted-foreground" />
+                          </div>
+                        );
+                      })()}
                     </div>
-
-                    {/* Content */}
                     <div className="p-6">
-                      <h3 className="text-xl font-bold mb-2 line-clamp-2">{property.title}</h3>
-
-                      <div className="flex items-center gap-2 text-accent font-bold text-lg mb-4">
+                      <h3 className="text-lg font-bold mb-2">{property.title}</h3>
+                      <div className="flex items-center gap-2 text-accent font-bold text-xl mb-4">
                         <DollarSign size={20} />
                         <span>{property.price}</span>
                       </div>
-
                       <div className="space-y-2 text-sm text-muted-foreground mb-4">
                         <div className="flex items-center gap-2">
                           <MapPin size={16} />
@@ -151,103 +121,108 @@ export default function Home() {
                           </div>
                         )}
                       </div>
-
-                      <button className="w-full bg-accent text-accent-foreground py-2 rounded-lg font-semibold hover:shadow-lg transition-all duration-300">
+                      <Link href={`/property/${property.id}`} className="w-full bg-accent text-accent-foreground py-2 rounded-lg font-semibold hover:shadow-lg transition-all duration-300">
                         View Details
-                      </button>
+                      </Link>
                     </div>
                   </div>
-                </a>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <Building2 size={48} className="mx-auto text-muted-foreground mb-4" />
+                <p className="text-lg text-muted-foreground">No properties available yet. Check back soon!</p>
+              </div>
+            )}
+
+            <div className="text-center mt-12">
+              <Link href="/properties" className="inline-block bg-accent text-accent-foreground px-8 py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-300">
+                View All Properties
               </Link>
-            ))}
+            </div>
           </div>
+        </section>
 
-          <div className="text-center mt-12">
-            <Link href="/properties">
-              <a className="btn-primary">View All Properties</a>
-            </Link>
-          </div>
-        </div>
-      </section>
+        {/* Services Section */}
+        <section className="py-16 md:py-24 bg-card">
+          <div className="container">
+            <h2 className="text-4xl font-bold mb-4 text-center">Our Services</h2>
+            <p className="text-lg text-muted-foreground mb-12 text-center">Comprehensive real estate solutions for all your needs</p>
 
-      {/* Services Section */}
-      <section className="section-padding bg-foreground text-background">
-        <div className="container">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Our Services</h2>
-            <p className="text-background/80 text-lg">Comprehensive real estate solutions for all your needs</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {services.map((service, index) => {
-              const Icon = service.icon;
-              return (
-                <div
-                  key={index}
-                  className="bg-background/10 backdrop-blur-sm border border-background/20 rounded-xl p-6 hover:bg-background/20 transition-all duration-300 text-center"
-                >
-                  <div className="flex justify-center mb-4">
-                    <div className="bg-accent text-foreground p-3 rounded-lg">
-                      <Icon size={28} />
-                    </div>
-                  </div>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              {[
+                { icon: DollarSign, title: 'Property Buying', description: 'Find your perfect property with our expert guidance' },
+                { icon: Building2, title: 'Property Selling', description: 'Sell your property quickly at the best price' },
+                { icon: Award, title: 'Investment Consultancy', description: 'Smart investment opportunities in prime locations' },
+                { icon: Users, title: 'Project Marketing', description: 'Comprehensive marketing for your projects' },
+              ].map((service, index) => (
+                <div key={index} className="bg-background border border-border rounded-xl p-6 hover:shadow-xl transition-all duration-300">
+                  <service.icon size={40} className="text-accent mb-4" />
                   <h3 className="text-xl font-bold mb-2">{service.title}</h3>
-                  <p className="text-background/80 text-sm">{service.description}</p>
+                  <p className="text-muted-foreground">{service.description}</p>
                 </div>
-              );
-            })}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Areas We Cover Section */}
-      <section className="section-padding bg-background">
-        <div className="container">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Areas We Cover</h2>
-            <p className="text-muted-foreground text-lg">Prime locations across Karachi</p>
-          </div>
+        {/* Areas We Cover */}
+        <section className="py-16 md:py-24 bg-background">
+          <div className="container">
+            <h2 className="text-4xl font-bold mb-4 text-center">Areas We Cover</h2>
+            <p className="text-lg text-muted-foreground mb-12 text-center">Prime locations across Karachi</p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {areas.map((area) => (
-              <div
-                key={area}
-                className="bg-card border border-border rounded-xl p-8 text-center hover:shadow-lg hover:border-accent transition-all duration-300 cursor-pointer group"
-              >
-                <div className="flex justify-center mb-4">
-                  <MapPin size={32} className="text-accent group-hover:scale-110 transition-transform" />
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              {areas.map((area) => (
+                <div key={area} className="bg-card border border-border rounded-xl p-6 text-center hover:shadow-xl transition-all duration-300 cursor-pointer" onClick={() => setSelectedArea(area)}>
+                  <MapPin size={40} className="text-accent mx-auto mb-4" />
+                  <h3 className="text-xl font-bold mb-2">{area}</h3>
+                  <p className="text-muted-foreground mb-4">Premium properties and investment opportunities</p>
+                  <button onClick={() => setSelectedArea(area)} className="text-accent font-semibold hover:underline">
+                    Explore →
+                  </button>
                 </div>
-                <h3 className="text-xl font-bold mb-2">{area}</h3>
-                <p className="text-muted-foreground text-sm">Premium properties and investment opportunities</p>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Why Choose Us Section */}
-      <section className="section-padding bg-gradient-to-br from-foreground to-foreground/95 text-background">
-        <div className="container">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Why Choose Us</h2>
-            <p className="text-background/80 text-lg">Your trusted partner in real estate</p>
-          </div>
+        {/* Why Choose Us */}
+        <section className="py-16 md:py-24 bg-card">
+          <div className="container">
+            <h2 className="text-4xl font-bold mb-12 text-center">Why Choose Us</h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {[
-              'Trusted property advisors with years of experience',
-              'Best investment opportunities in prime locations',
-              'Professional and transparent marketing',
-              'Fast and hassle-free property transactions',
-            ].map((reason, index) => (
-              <div key={index} className="flex items-start gap-4">
-                <CheckCircle size={24} className="text-accent flex-shrink-0 mt-1" />
-                <p className="text-lg">{reason}</p>
-              </div>
-            ))}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {[
+                { icon: Award, title: 'Trusted Advisors', description: 'Years of experience in premium real estate' },
+                { icon: Zap, title: 'Best Opportunities', description: 'Investment opportunities in prime locations' },
+                { icon: Users, title: 'Professional Team', description: 'Transparent and professional marketing' },
+              ].map((item, index) => (
+                <div key={index} className="text-center">
+                  <item.icon size={48} className="text-accent mx-auto mb-4" />
+                  <h3 className="text-2xl font-bold mb-2">{item.title}</h3>
+                  <p className="text-muted-foreground">{item.description}</p>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
-    </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="py-16 md:py-24 bg-gradient-to-br from-foreground to-foreground/90 text-background">
+          <div className="container text-center">
+            <h2 className="text-4xl font-bold mb-4">Ready to Find Your Dream Property?</h2>
+            <p className="text-xl text-background/90 mb-8">Contact us today for personalized assistance</p>
+            <button
+              onClick={() => handleWhatsAppInquiry('Hi, I am interested in your real estate services.')}
+              className="inline-flex items-center gap-2 bg-accent text-accent-foreground px-8 py-4 rounded-lg font-semibold hover:shadow-lg transition-all duration-300"
+            >
+              <MessageCircle size={20} />
+              Chat on WhatsApp
+            </button>
+          </div>
+        </section>
+      </div>
+    </>
   );
 }
