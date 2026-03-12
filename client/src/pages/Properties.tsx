@@ -130,17 +130,20 @@ export default function Properties() {
                   >
                     {/* Image */}
                     <div className="relative h-48 bg-muted overflow-hidden">
-                      {property.imageUrl ? (
-                        <img
-                          src={property.imageUrl}
-                          alt={property.title}
-                          className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted to-muted/50">
-                          <Building2 size={48} className="text-muted-foreground" />
-                        </div>
-                      )}
+                      {(() => {
+                        const imageUrl = Array.isArray(property.images) && property.images.length > 0 ? property.images[0] : property.imageUrl;
+                        return imageUrl ? (
+                          <img
+                            src={imageUrl}
+                            alt={property.title}
+                            className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted to-muted/50">
+                            <Building2 size={48} className="text-muted-foreground" />
+                          </div>
+                        );
+                      })()}
                       <div className="absolute top-4 right-4 bg-accent text-accent-foreground px-3 py-1 rounded-full text-sm font-semibold">
                         {property.propertyType}
                       </div>

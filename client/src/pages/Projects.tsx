@@ -13,17 +13,20 @@ export default function Projects() {
     <div className="bg-card border border-border rounded-xl overflow-hidden hover:shadow-2xl transition-all duration-300">
       {/* Image */}
       <div className="relative h-48 bg-muted overflow-hidden">
-        {project.imageUrl ? (
-          <img
-            src={project.imageUrl}
-            alt={project.name}
-            className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted to-muted/50">
-            <Building2 size={48} className="text-muted-foreground" />
-          </div>
-        )}
+        {(() => {
+          const imageUrl = Array.isArray(project.images) && project.images.length > 0 ? project.images[0] : project.imageUrl;
+          return imageUrl ? (
+            <img
+              src={imageUrl}
+              alt={project.name}
+              className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted to-muted/50">
+              <Building2 size={48} className="text-muted-foreground" />
+            </div>
+          );
+        })()}
         <div className="absolute top-4 right-4 flex items-center gap-2 bg-background/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-semibold">
           {project.status === 'completed' ? (
             <>
