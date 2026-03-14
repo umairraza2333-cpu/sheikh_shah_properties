@@ -15,6 +15,13 @@
       "when": 1773089380838,
       "tag": "0001_foamy_blizzard",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1773517763760,
+      "tag": "0002_motionless_flatman",
+      "breakpoints": true
     }
   ]
 }

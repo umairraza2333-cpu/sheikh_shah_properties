@@ -16,7 +16,20 @@ export const users = mysqlTable("users", {
   name: text("name"),
   email: varchar("email", { length: 320 }),
   loginMethod: varchar("loginMethod", { length: 64 }),
-  role: mysqlEnum("role", ["user", "admin"]).default("user").notNull(),
+  role: mysqlEnum("role", ["buyer", "agent", "admin"]).default("buyer").notNull(),
+  userType: mysqlEnum("userType", ["buyer", "agent"]).default("buyer"),
+  // Trial system for agents
+  trialStartDate: timestamp("trialStartDate"),
+  trialEndDate: timestamp("trialEndDate"),
+  isTrialActive: boolean("isTrialActive").default(false),
+  isPremium: boolean("isPremium").default(false),
+  subscriptionStatus: mysqlEnum("subscriptionStatus", ["active", "inactive", "expired", "cancelled"]).default("inactive"),
+  // Agent profile information
+  companyName: varchar("companyName", { length: 255 }),
+  phone: varchar("phone", { length: 20 }),
+  address: text("address"),
+  profileImage: varchar("profileImage", { length: 500 }),
+  bio: text("bio"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
   lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
@@ -24,6 +37,31 @@ export const users = mysqlTable("users", {
 
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
+
+// Agent Listings Table - tracks properties posted by agents
+export const agentListings = mysqlTable("agentListings", {
+  id: int("id").autoincrement().primaryKey(),
+  agentId: int("agentId").notNull(),
+  propertyId: int("propertyId").notNull(),
+  isActive: boolean("isActive").default(true),
+  viewCount: int("viewCount").default(0),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type AgentListing = typeof agentListings.$inferSelect;
+export type InsertAgentListing = typeof agentListings.$inferInsert;
+
+// Favorites Table - for buyers to save properties
+export const favorites = mysqlTable("favorites", {
+  id: int("id").autoincrement().primaryKey(),
+  buyerId: int("buyerId").notNull(),
+  propertyId: int("propertyId").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type Favorite = typeof favorites.$inferSelect;
+export type InsertFavorite = typeof favorites.$inferInsert;
 
 // Properties Table
 export const properties = mysqlTable("properties", {
@@ -87,3 +125,21 @@ export const inquiries = mysqlTable("inquiries", {
 
 export type Inquiry = typeof inquiries.$inferSelect;
 export type InsertInquiry = typeof inquiries.$inferInsert;
+
+// Subscription Payments Table - for tracking agent payments
+export const subscriptionPayments = mysqlTable("subscriptionPayments", {
+  id: int("id").autoincrement().primaryKey(),
+  agentId: int("agentId").notNull(),
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  currency: varchar("currency", { length: 10 }).default("PKR"),
+  paymentMethod: mysqlEnum("paymentMethod", ["jazzcash", "easypaisa", "bank_transfer", "credit_card"]).notNull(),
+  transactionId: varchar("transactionId", { length: 255 }),
+  status: mysqlEnum("status", ["pending", "completed", "failed", "refunded"]).default("pending"),
+  subscriptionPeriodStart: timestamp("subscriptionPeriodStart"),
+  subscriptionPeriodEnd: timestamp("subscriptionPeriodEnd"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type SubscriptionPayment = typeof subscriptionPayments.$inferSelect;
+export type InsertSubscriptionPayment = typeof subscriptionPayments.$inferInsert;

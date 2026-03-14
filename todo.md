@@ -146,3 +146,14 @@
 - [ ] Add property comparison tool
 - [ ] Create Plot Finder specialized search
 - [ ] Add Tools section (mortgage calculator, valuation)
+
+## Role-Based Authentication System
+- [ ] Update database schema for buyer/agent roles and trial system
+- [ ] Create role selection UI for signup
+- [ ] Implement role-based authentication flow
+- [ ] Build Agent Dashboard with property management
+- [ ] Build Buyer Dashboard with search and favorites
+- [ ] Implement role-based access control and permissions
+- [ ] Add trial system (3 months free for agents)
+- [ ] Add subscription/payment integration for agents
+- [ ] Test role-based functionality
